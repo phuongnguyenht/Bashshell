@@ -18,7 +18,7 @@ report_bak="/opt/Scripts/report_bak"
 
 ########## Config info Database ###########################
 DB_UserName="sms_ads"
-DB_Password="smsmkt20180racl3Ads0302"
+DB_Password="passwd"
 DB_Port="1521"
 DB_SERVICE_NAME="smsmkt"
 DB_Host_01="192.168.38.158"
@@ -28,9 +28,9 @@ DB_Host_02="192.168.38.157"
 server_mail="smtp.vivas.vn"
 server_port="587"
 email_from="support.smsmktstaging@vivas.vn"
-email_from_pass="vivas@12!"
+email_from_pass="passwd"
 email_to="linhnb@vivas.vn" 
-#email_to="dungdc@vivas.vn,hanm@vivas.vn,hocnv@vivas.vn,hungnm@vivas.vn,linhnb@vivas.vn,lanhtk@vivas.vn,quangnm@vivas.vn,lieuhth@vivas.vn"
+#email_to="xxx,yyy"
 
 ######### Config time for report #########################
 total_start_time=$(date -d "-1 day" +%Y%m01)
